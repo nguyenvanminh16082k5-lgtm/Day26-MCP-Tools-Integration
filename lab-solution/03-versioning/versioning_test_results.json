@@ -1,0 +1,50 @@
+{
+  "test_suite": "MCP Versioning & Backward Compatibility Verification (Bai 3 - Kho)",
+  "timestamp": "2026-08-28T11:00:19.677093+00:00",
+  "server_version": "2.0.0",
+  "overall_status": "PASSED",
+  "legacy_client_test": {
+    "client_type": "legacy_v1",
+    "called_tool": "get_recent_errors",
+    "status": "PASSED",
+    "response_type": "plain_text",
+    "preview": "=== [v1 Legacy] 2 loi gan nhat ===\n\n[1] 2026-08-28 17:06:52 | ERROR | api-gateway | Trace: req-015a8b\n    [2026-08-28 17:06:52] [ERROR   ] [api-gateway      ] [req-015a8b] SchemaValidationError: Missi"
+  },
+  "modern_client_test": {
+    "client_type": "modern_v2",
+    "metadata_read": {
+      "server_name": "log-analyzer",
+      "version": "2.0.0",
+      "api_version": "2.0",
+      "capabilities": [
+        "text_search",
+        "structured_json_diagnostics",
+        "traceback_parsing",
+        "service_filtering"
+      ],
+      "deprecated_tools": [
+        "get_recent_errors"
+      ],
+      "active_tools": [
+        "get_recent_errors_v2",
+        "search_logs"
+      ],
+      "migration_guide": "Chuyen tu get_recent_errors (v1) sang get_recent_errors_v2 (v2). Tham so 'limit' va 'service' giu nguyen. Format v2 tra ve JSON co cau truc gom timestamp, level, service, trace_id, error_type, stack_trace, suggested_action."
+    },
+    "selected_tool": "get_recent_errors_v2",
+    "status": "PASSED",
+    "response_type": "structured_json",
+    "parsed_summary": {
+      "api_version": "2.0",
+      "returned_count": 2,
+      "sample_error_type": "SchemaValidationError",
+      "sample_suggested_action": "Kiem tra payload request cua API client, dam bao day du cac field required."
+    }
+  },
+  "backward_compatibility_verified": true,
+  "capabilities_tested": [
+    "Resource server://info metadata publishing",
+    "Parallel tool coexistence (v1 deprecated + v2 active)",
+    "Rich Structured JSON diagnostics with suggested actions"
+  ]
+}

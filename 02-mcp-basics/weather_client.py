@@ -15,14 +15,21 @@ Cách chạy (cùng thư mục với weather_server.py, client tự khởi độ
 
 import asyncio
 import sys
+from pathlib import Path
+
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 
 async def main() -> None:
+    # Xác định đường dẫn chính xác tới weather_server.py
+    server_script = str(Path(__file__).parent / "weather_server.py")
+    
     # Dùng đúng interpreter đang chạy client (tránh lỗi "python" không tồn tại)
-    params = StdioServerParameters(command=sys.executable, args=["weather_server.py"])
+    params = StdioServerParameters(command=sys.executable, args=[server_script])
 
     async with stdio_client(params) as (read, write):
         async with ClientSession(read, write) as session:
@@ -36,9 +43,19 @@ async def main() -> None:
 
             # 2. Gọi tool — SERVER thực thi rồi trả kết quả về qua MCP
             for city in ["Hanoi", "Danang", "Haiphong"]:
-                result = await session.call_tool("get_weather", {"city": city})
+                result_1 = await session.call_tool("get_weather", {"city": city})
                 print(f"\ncall_tool get_weather(city={city!r}):")
-                print("  ->", result.content[0].text)
+                print("  ->", result_1.content[0].text)
+
+                result_2 = await session.call_tool("get_news", {"city": city})
+                print(f"\ncall_tool get_news(city={city!r}):")
+                print("  ->", result_2.content[0].text)
+        
+
+            for singer in ["Sơn Tùng M-TP", "Bích Phương", "Taylor Swift"]:
+                result_3 = await session.call_tool("get_singer", {"name": singer})
+                print(f"\ncall_tool get_singer(name={singer!r}):")
+                print("  ->", result_3.content[0].text)
 
 
 if __name__ == "__main__":

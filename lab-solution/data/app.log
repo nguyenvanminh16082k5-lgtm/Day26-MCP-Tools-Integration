@@ -1,0 +1,51 @@
+[2026-08-28 16:16:52] [INFO    ] [api-gateway      ] [req-001a8f] Incoming GET /api/v1/health from 10.0.0.12 - 200 OK (2ms)
+[2026-08-28 16:21:52] [INFO    ] [auth-service     ] [req-002bc3] User usr_1042 successfully authenticated via OAuth2
+[2026-08-28 16:23:52] [INFO    ] [order-service    ] [req-003de4] Creating new order ORD-2026-9901 for user usr_1042 (total: $149.99)
+[2026-08-28 16:26:52] [WARNING ] [inventory-service] [req-004f5a] Low stock warning for SKU-8841 (Remaining: 2 units)
+[2026-08-28 16:29:52] [INFO    ] [payment-service  ] [req-005a1b] Initiating Stripe payment charge for order ORD-2026-9901
+[2026-08-28 16:31:52] [ERROR   ] [payment-service  ] [req-005a1b] PaymentGatewayError: 502 Bad Gateway from upstream endpoint https://api.stripe.com/v1/charges
+    Traceback (most recent call last):
+      File "/app/services/payment.py", line 84, in process_charge
+        response = httpx.post(STRIPE_ENDPOINT, json=payload, timeout=5.0)
+      File "/app/vendor/httpx/_client.py", line 1024, in post
+        return self.request("POST", url, data=data, json=json)
+    httpx.HTTPStatusError: 502 Server Error: Bad Gateway for url: https://api.stripe.com/v1/charges
+[2026-08-28 16:33:52] [INFO    ] [payment-service  ] [req-006c7d] Retrying payment charge for order ORD-2026-9901 (attempt 2/3)
+[2026-08-28 16:34:52] [INFO    ] [payment-service  ] [req-006c7d] Payment charge succeeded on retry for order ORD-2026-9901
+[2026-08-28 16:39:52] [WARNING ] [auth-service     ] [req-007e8f] Rate limit exceeded (429) for IP 192.168.1.99 - 100 requests/minute
+[2026-08-28 16:43:52] [ERROR   ] [auth-service     ] [req-008f9a] AuthenticationFailedException: Invalid signature on JWT bearer token for user_id=usr_8492
+    Traceback (most recent call last):
+      File "/app/services/auth.py", line 112, in verify_jwt
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+      File "/app/vendor/jwt/api_jwt.py", line 156, in decode
+        raise InvalidSignatureError("Signature verification failed")
+    jwt.exceptions.InvalidSignatureError: Signature verification failed
+[2026-08-28 16:46:52] [INFO    ] [order-service    ] [req-009a2b] Batch job archive_completed_orders started (processing 450 orders)
+[2026-08-28 16:51:52] [ERROR   ] [order-service    ] [req-010b3c] psycopg2.OperationalError: Connection to database host db-postgres:5432 timed out after 30000ms
+    Traceback (most recent call last):
+      File "/app/db/connection.py", line 45, in get_db_cursor
+        conn = psycopg2.connect(DATABASE_URL, connect_timeout=30)
+      File "/app/vendor/psycopg2/__init__.py", line 122, in connect
+        dsn = _ext.make_dsn(dsn, **kwargs)
+    psycopg2.OperationalError: could not connect to server: Connection timed out
+    	Is the server running on host "db-postgres" (10.0.4.15) and accepting
+    	TCP/IP connections on port 5432?
+[2026-08-28 16:53:52] [WARNING ] [order-service    ] [req-011c4d] Database pool fallback to read-replica db-replica-01 enabled
+[2026-08-28 16:56:52] [INFO    ] [inventory-service] [req-012d5e] Inventory cache refreshed (total SKUs indexed: 14,200)
+[2026-08-28 17:01:52] [CRITICAL] [worker-service   ] [req-013e6f] MemoryLimitExceededError: Worker process exceeded hard limit of 2048MB (current RSS: 2150MB), trigger OOM-kill
+    Traceback (most recent call last):
+      File "/app/workers/memory_monitor.py", line 67, in check_health
+        raise MemoryLimitExceededError(f"Process {os.getpid()} exceeded threshold: {mem_mb}MB")
+    workers.exceptions.MemoryLimitExceededError: Worker process 4812 exceeded threshold: 2150MB
+[2026-08-28 17:03:52] [WARNING ] [worker-service   ] [req-014f7a] Spawning new replacement worker process (pid: 5920)
+[2026-08-28 17:06:52] [ERROR   ] [api-gateway      ] [req-015a8b] SchemaValidationError: Missing required field 'customer_email' in payload for POST /api/v1/checkout
+    Traceback (most recent call last):
+      File "/app/middleware/validator.py", line 32, in validate_body
+        schema.validate(body)
+      File "/app/vendor/pydantic/main.py", line 521, in validate
+        raise ValidationError("Field 'customer_email' is required but missing")
+    pydantic.error_wrappers.ValidationError: 1 validation error for CheckoutPayload
+    customer_email
+      Field required (type=value_error.missing)
+[2026-08-28 17:09:52] [INFO    ] [api-gateway      ] [req-016b9c] Incoming GET /api/v1/metrics from Prometheus scraper - 200 OK (5ms)
+[2026-08-28 17:10:52] [INFO    ] [api-gateway      ] [req-017c0d] Heartbeat check PASSED for all 6 microservices

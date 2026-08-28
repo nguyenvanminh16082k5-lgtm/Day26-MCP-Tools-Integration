@@ -1,0 +1,56 @@
+{
+  "test_suite": "MCP Authentication & Streamable HTTP Verification (Bai 2 - Trung binh)",
+  "timestamp": "2026-08-28T11:00:08.439120+00:00",
+  "target_server": "http://localhost:8000/mcp",
+  "transport": "streamable-http",
+  "overall_status": "PASSED",
+  "total_cases": 3,
+  "passed_cases": 3,
+  "failed_cases": 0,
+  "cases": [
+    {
+      "case_id": "AUTH-01",
+      "name": "Valid Bearer Token",
+      "description": "Client gui Authorization header voi token hop le duoc cap quyen",
+      "request_header": {
+        "Authorization": "Bearer log-reader-secret-token-2026"
+      },
+      "expected_status": "SUCCESS (200 OK)",
+      "actual_status": "SUCCESS (200 OK)",
+      "result": "PASSED",
+      "discovered_tools": [
+        "get_recent_errors",
+        "search_logs"
+      ],
+      "tool_call_test": {
+        "tool": "get_recent_errors",
+        "arguments": {
+          "limit": 2
+        },
+        "response_preview": "=== [Auth Verified] 2 loi gan nhat ===\n\n[1] 2026-08-28 17:06:52 | ERROR | api-gateway | Trace: req-015a8b\n    [2026-08-28 17:06:52] [ERROR   ] [api-gateway      ] [req-015a8b] SchemaValidationError: Missing required field 'customer_email' in payload for POST /api/v1/checkout\n    Traceback (most rece..."
+      }
+    },
+    {
+      "case_id": "AUTH-02",
+      "name": "Invalid Bearer Token",
+      "description": "Client gui Authorization header voi token khong ton tai trong danh sach",
+      "request_header": {
+        "Authorization": "Bearer invalid-token-xyz-12345"
+      },
+      "expected_status": "REJECTED (HTTP 401/403)",
+      "actual_status": "REJECTED (HTTP 401/403)",
+      "result": "PASSED",
+      "rejection_detail": "Server tu choi truy cap do token sai: unhandled errors in a TaskGroup (1 sub-exception)"
+    },
+    {
+      "case_id": "AUTH-03",
+      "name": "Missing Authorization Header",
+      "description": "Client ket noi toi endpoint MCP HTTP nhung khong truyen header Authorization",
+      "request_header": {},
+      "expected_status": "REJECTED (HTTP 401)",
+      "actual_status": "REJECTED (HTTP 401)",
+      "result": "PASSED",
+      "rejection_detail": "Server da chan ket noi do thieu header Authorization: unhandled errors in a TaskGroup (1 sub-exception)"
+    }
+  ]
+}
