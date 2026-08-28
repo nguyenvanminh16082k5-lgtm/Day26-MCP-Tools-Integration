@@ -1,101 +1,104 @@
 # Day 26: Model Context Protocol (MCP) & Tools Integration
 
-> **Loi giai Bai tap Lab (Lab Solutions)**: Toan bo ma nguon, test client, chatbot CLI va file bao cao ket qua nghiem thu cho 3 cap do (De, Trung binh, Kho) duoc dat tai thu muc **[`lab-solution/`](lab-solution/)**.
+> **Lời giải Bài tập Lab (Lab Solutions)**: Toàn bộ mã nguồn, test client, chatbot CLI và file báo cáo kỹ thuật nghiệm thu cho 3 cấp độ (Dễ, Trung bình, Khó) được đặt tại thư mục **[`lab-solution/`](lab-solution/)**.
 > 
-> * **Bao cao tong ket nghiem thu**: [`lab-solution/REPORT.md`](lab-solution/REPORT.md)
-> * **Huong dan chi tiet tung bai**: [`lab-solution/README.md`](lab-solution/README.md)
+> * **Báo cáo kỹ thuật tổng kết**: [`lab-solution/REPORT.md`](lab-solution/REPORT.md)
+> * **Hướng dẫn cài đặt, mô tả Input/Output & Đăng ký Claude Code**: [`lab-solution/README.md`](lab-solution/README.md)
 
 ---
 
-## 1. Huong dan Nhanh cho Nguoi Cham (Quick Start for Grading)
+## 1. Hướng dẫn Nhanh cho Người Chấm Bài (Quick Start for Grading)
 
-### Kich hoat moi truong
+### Kích hoạt môi trường
 ```bash
 # Windows PowerShell
 .venv\Scripts\Activate.ps1
 ```
 
-### Chay kiem thu cac cap do bai tap:
+### Chạy kiểm thử từng cấp độ bài tập:
 
-#### Bai 1 - De: MCP Server qua stdio (Application Log Analyzer)
+#### Bài 1 - Dễ: MCP Server qua stdio (Application Log Analyzer)
 ```bash
-# Kiem thu giao thuc stdio (khong can API key)
+# Kiểm thử giao thức stdio (không cần API key)
 python lab-solution/01-stdio/test_client.py
 
-# Chatbot CLI voi Gemini 2.5 Flash (can GEMINI_API_KEY trong .env)
+# Chatbot CLI với Gemini 2.5 Flash (cần GEMINI_API_KEY trong .env)
 python lab-solution/01-stdio/chat_client.py
+
+# Đăng ký với Claude Code:
+claude mcp add log-analyzer -- python "c:/Users/USER/Desktop/Vin/Day26-MCP-Tools-Integration/lab-solution/01-stdio/log_server.py"
 ```
 
-#### Bai 2 - Trung binh: Streamable HTTP + Authentication (Bearer Token)
-* Terminal 1 (Chay server tren port 8000):
+#### Bài 2 - Trung bình: Streamable HTTP + Authentication (Bearer Token)
+* Terminal 1 (Chạy server trên port 8000):
   ```bash
   python lab-solution/02-auth/auth_log_server.py
   ```
-* Terminal 2 (Chay test suite 3 kich ban bao mat):
+* Terminal 2 (Chạy test suite 3 kịch bản bảo mật):
   ```bash
   python lab-solution/02-auth/test_auth_client.py
   ```
-* Ket qua thuc te duoc luu tai: [`lab-solution/02-auth/auth_test_results.json`](lab-solution/02-auth/auth_test_results.json)
+* Kết quả thực tế được lưu tại: [`lab-solution/02-auth/auth_test_results.json`](lab-solution/02-auth/auth_test_results.json)
 
-#### Bai 3 - Kho: Versioning & Backward Compatibility
+#### Bài 3 - Khó: Versioning & Backward Compatibility
 ```bash
-# Chay kiem thu ca Legacy Client (v1) va Modern Client (v2 doc server://info)
+# Chạy kiểm thử cả Legacy Client (v1) và Modern Client (v2 đọc server://info)
 python lab-solution/03-versioning/modern_client.py
 ```
-* Ket qua thuc te duoc luu tai: [`lab-solution/03-versioning/versioning_test_results.json`](lab-solution/03-versioning/versioning_test_results.json)
+* Kết quả thực tế được lưu tại: [`lab-solution/03-versioning/versioning_test_results.json`](lab-solution/03-versioning/versioning_test_results.json)
 
 ---
 
-## 2. Cau truc Toan bo Repository
+## 2. Cấu trúc Toàn bộ Repository
 
 ```
 Day26-MCP-Tools-Integration/
-├── README.md                      <- Huong dan tong quan toan bo repo
+├── README.md                      <- Hướng dẫn tổng quan toàn bộ repo
 │
-├── lab-solution/                  <- [LOI GIAI BAI TAP LAB DAY 26]
-│   ├── REPORT.md                  <- Bao cao ket qua nghiem thu chi tiet
-│   ├── README.md                  <- Huong dan chi tiet cho lab-solution
+├── lab-solution/                  <- [LỜI GIẢI BÀI TẬP LAB DAY 26]
+│   ├── REPORT.md                  <- Báo cáo kết quả kỹ thuật chi tiết
+│   ├── README.md                  <- Hướng dẫn chi tiết, Input/Output bảng tra cứu
 │   ├── requirements.txt           <- Dependencies
-│   ├── .env.example               <- Template bien moi truong
+│   ├── .env.example               <- Template biến môi trường
 │   │
-│   ├── data/                      <- Du lieu log thuc te da microservices
-│   │   ├── app.log                <- File log he thong chua 5 loi kem stack trace
-│   │   └── generate_logs.py       <- Script tao/lam moi timestamps log
+│   ├── data/                      <- Dữ liệu log thực tế đa microservices
+│   │   ├── app.log                <- File log hệ thống chứa 5 lỗi kèm stack trace
+│   │   └── generate_logs.py       <- Script tạo/làm mới timestamps log
 │   │
-│   ├── 01-stdio/                  <- [BAI 1 - DE] MCP Server stdio
-│   │   ├── log_server.py          <- FastMCP/MCPServer cung cap 2 tools
-│   │   ├── test_client.py         <- Client kiem thu giao thuc stdio
-│   │   └── chat_client.py         <- AI Chatbot CLI tich hop Gemini 2.5 Flash
+│   ├── 01-stdio/                  <- [BÀI 1 - DỄ] MCP Server stdio
+│   │   ├── log_server.py          <- FastMCP/MCPServer cung cấp 2 tools
+│   │   ├── test_client.py         <- Client kiểm thử giao thức stdio
+│   │   └── chat_client.py         <- AI Chatbot CLI tích hợp Gemini 2.5 Flash
 │   │
-│   ├── 02-auth/                   <- [BAI 2 - TRUNG BINH] Streamable HTTP + Auth
-│   │   ├── auth_log_server.py     <- Server HTTP tich hop StaticTokenVerifier
-│   │   ├── test_auth_client.py    <- Test suite tu dong 3 kich ban bao mat
-│   │   └── auth_test_results.json <- File JSON ket qua kiem thu thuc te
+│   ├── 02-auth/                   <- [BÀI 2 - TRUNG BÌNH] Streamable HTTP + Auth
+│   │   ├── auth_log_server.py     <- Server HTTP tích hợp StaticTokenVerifier
+│   │   ├── test_auth_client.py    <- Test suite tự động 3 kịch bản bảo mật
+│   │   └── auth_test_results.json <- File JSON kết quả kiểm thử thực tế
 │   │
-│   └── 03-versioning/             <- [BAI 3 - KHO] Versioning & Backward Compat
+│   └── 03-versioning/             <- [BÀI 3 - KHÓ] Versioning & Backward Compat
 │       ├── versioned_log_server.py<- Server v2.0 (v1 + v2 + resource server://info)
-│       ├── legacy_client.py       <- Client v1 goi tool cu (khong bi break)
-│       ├── modern_client.py       <- Client v2 doc server://info va goi tool v2
-│       └── versioning_test_results.json <- File JSON ket qua kiem thu thuc te
+│       ├── legacy_client.py       <- Client v1 gọi tool cũ (không bị break)
+│       ├── modern_client.py       <- Client v2 đọc server://info và gọi tool v2
+│       └── versioning_test_results.json <- File JSON kết quả kiểm thử thực tế
 │
-├── 01-function-calling/           <- Vi du ly thuyet: Function Calling thuan (Gemini SDK)
-├── 02-mcp-basics/                 <- Vi du ly thuyet: MCP Server & Client co ban
-└── 03-production/                 <- Vi du ly thuyet: Auth, Registry, Versioning
+├── 01-function-calling/           <- Ví dụ lý thuyết: Function Calling thuần (Gemini SDK)
+├── 02-mcp-basics/                 <- Ví dụ lý thuyết: MCP Server & Client cơ bản
+└── 03-production/                 <- Ví dụ lý thuyết: Auth, Registry, Versioning
 ```
 
 ---
 
-## 3. Phan biet MCP va Function Calling
+## 3. Phân biệt MCP và Function Calling
 
-### Dinh nghia
-* **Function Calling** la mot *kha nang cua model* (capability). Model tu quyet dinh goi tool va sinh JSON tham so, nhung app moi la noi chay tool.
-* **MCP (Model Context Protocol)** la mot *giao thuc chuan* (protocol) giup cac MCP Client (Claude Code, Claude Desktop, Cursor, Custom Client) ket noi va su dung tools/resources tu MCP Server mot cach thong nhat.
+### Định nghĩa
+* **Function Calling** là một *khả năng của model* (capability). Model tự quyết định gọi tool và sinh JSON tham số, nhưng ứng dụng (app) mới là nơi chạy tool.
+* **MCP (Model Context Protocol)** là một *giao thức chuẩn* (protocol) giúp các MCP Client (Claude Code, Claude Desktop, Cursor, Custom Client) kết nối và sử dụng tools/resources từ MCP Server một cách thống nhất.
 
-### So sanh truc tiep
-| Tieu chi | Function Calling | Model Context Protocol (MCP) |
+### So sánh trực tiếp
+| Tiêu chí | Function Calling | Model Context Protocol (MCP) |
 |---|---|---|
-| **Ban chat** | Tinh nang cua mo hinh (Model capability) | Giao thuc giao tiep client-server |
-| **Dinh nghia tool** | Hard-code trong tung app | Server tu cong bo (self-describe) tool |
-| **Tai su dung** | Phai viet lai cho moi app | Viet 1 lan, moi MCP client dung duoc |
-| **Thuc thi** | App tu chay | MCP Server chay, client dieu phoi |
-| **Chuan hoa** | Moi nha cung cap 1 kieu | Chuan chung cua he sinh thai Anthropic/MCP |
+| **Bản chất** | Tính năng của mô hình (Model capability) | Giao thức giao tiếp client-server |
+| **Định nghĩa tool** | Hard-code trong từng app | Server tự công bố (self-describe) tool |
+| **Tái sử dụng** | Phải viết lại cho mỗi app | Viết 1 lần, mọi MCP client dùng được |
+| **Thực thi** | App tự chạy | MCP Server chạy, client điều phối |
+| **Chuẩn hóa** | Mỗi nhà cung cấp 1 kiểu | Chuẩn chung của hệ sinh thái Anthropic/MCP |
