@@ -1,6 +1,6 @@
 {
   "test_suite": "MCP Authentication & Streamable HTTP Verification (Bai 2 - Trung binh)",
-  "timestamp": "2026-08-28T11:00:08.439120+00:00",
+  "timestamp": "2026-08-28T15:20:56.520500+00:00",
   "target_server": "http://localhost:8000/mcp",
   "transport": "streamable-http",
   "overall_status": "PASSED",

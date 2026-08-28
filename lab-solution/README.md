@@ -90,24 +90,14 @@ Phiên bản nâng cấp trả về dữ liệu có cấu trúc JSON, tự độ
 
 ## 3. Hướng dẫn Đăng ký MCP Server với Claude Code
 
-Để tích hợp công cụ phân tích log này trực tiếp vào Claude Code trên máy tính của bạn:
+Server đã được cấu hình sẵn trong file [`.mcp.json`](../.mcp.json) ở gốc repo. Claude Code sẽ tự động nhận diện khi bạn mở thư mục dự án.
 
-### Bước 1: Chạy lệnh đăng ký MCP Server
-Mở terminal và chạy lệnh sau (thay đường dẫn tuyệt đối tới file `log_server.py` trên máy của bạn):
-
+### Đăng ký thủ công qua CLI (Nếu cần):
 ```bash
 claude mcp add log-analyzer -- python "c:/Users/USER/Desktop/Vin/Day26-MCP-Tools-Integration/lab-solution/01-stdio/log_server.py"
 ```
 
-### Bước 2: Kiểm tra trong Claude Code
-Khởi động Claude Code và kiểm tra danh sách công cụ:
-```bash
-claude
-/mcp
-```
-*(Bạn sẽ thấy 2 công cụ `get_recent_errors` và `search_logs` đã sẵn sàng hoạt động).*
-
-### Bước 3: Đặt câu hỏi tự nhiên để Claude Code tự gọi tool
+### Câu hỏi tự nhiên mẫu để kiểm thử:
 * *"Tìm cho tôi 3 lỗi gần nhất trong file log hệ thống và phân tích nguyên nhân."*
 * *"Kiểm tra xem user `usr_1042` đã gặp vấn đề gì khi đặt đơn hàng?"*
 * *"Hôm nay hệ thống có bị lỗi kết nối cơ sở dữ liệu PostgreSQL hay không?"*
@@ -129,16 +119,16 @@ pip install -r lab-solution/requirements.txt
 
 ### 4.1. Bài 1 (Dễ): MCP Server qua `stdio`
 * **Server**: [`01-stdio/log_server.py`](01-stdio/log_server.py)
-* **Kiểm thử giao thức stdio (Không cần API key)**:
+* **Kiểm thử giao thức stdio**:
   ```bash
   python lab-solution/01-stdio/test_client.py
   ```
-* **Trò chuyện với AI Chatbot CLI (Tích hợp Gemini 2.5 Flash)**:
-  1. Cấu hình API key trong file `.env`: `GEMINI_API_KEY=AIzaSy...`
-  2. Khởi chạy:
-     ```bash
-     python lab-solution/01-stdio/chat_client.py
-     ```
+* **Trò chuyện với AI Chatbot CLI (Gemini 2.5 Flash)**:
+  ```bash
+  python lab-solution/01-stdio/chat_client.py
+  ```
+* **Ảnh minh chứng chạy thực nghiệm Bài 1**:
+  ![Minh chứng chạy Bài 1](assets/bai-1.png)
 
 ---
 
@@ -153,25 +143,23 @@ pip install -r lab-solution/requirements.txt
     ```bash
     python lab-solution/02-auth/test_auth_client.py
     ```
-* **Kịch bản được chứng minh**:
-  1. Token đúng (`Bearer log-reader-secret-token-2026`): 200 OK, gọi tool thành công.
-  2. Token sai (`Bearer invalid-token-xyz-12345`): 401 Unauthorized.
-  3. Thiếu Token: 401 Unauthorized.
+* **Ảnh minh chứng chạy thực nghiệm Bài 2**:
+  ![Minh chứng chạy Bài 2](assets/bai-2.png)
 * **File bằng chứng kiểm thử thực tế**: [`02-auth/auth_test_results.json`](02-auth/auth_test_results.json).
 
 ---
 
 ### 4.3. Bài 3 (Khó): Versioning & Backward Compatibility
 * **Server v2**: [`03-versioning/versioned_log_server.py`](03-versioning/versioned_log_server.py)
-  * Khai báo Resource `server://info` công bố metadata v2.0.0, danh sách deprecated tools và migration guide.
-  * Hỗ trợ đồng thời Tool v1 (plain text) và Tool v2 (Structured JSON).
 * **Kiểm thử tự động cả Legacy Client và Modern Client**:
   ```bash
   python lab-solution/03-versioning/modern_client.py
   ```
-* **Kết quả**:
-  * `legacy_client.py`: Gọi tool v1 thành công, nhận text string (không bị break code).
-  * `modern_client.py`: Đọc metadata từ `server://info`, phát hiện v1 deprecated và tự động gọi v2 JSON.
+* **Ảnh minh chứng chạy thực nghiệm Bài 3**:
+  * *Legacy Client v1 nhận text string*:
+    ![Minh chứng Bài 3.1 - Legacy Client](assets/bai-3.1.png)
+  * *Modern Client v2 nhận Structured JSON*:
+    ![Minh chứng Bài 3.2 - Modern Client](assets/bai-3.2.png)
 * **File bằng chứng kiểm thử thực tế**: [`03-versioning/versioning_test_results.json`](03-versioning/versioning_test_results.json).
 
 ---
@@ -183,7 +171,7 @@ pip install -r lab-solution/requirements.txt
 | MCP Server stdio + 2 tools tự xây | Bài 1 (Dễ) | ĐÃ ĐẠT | [`01-stdio/test_client.py`](01-stdio/test_client.py) |
 | Đọc log thực tế, xử lý stack trace đa dòng | Bài 1 (Dễ) | ĐÃ ĐẠT | [`data/app.log`](data/app.log) |
 | AI Chatbot CLI tích hợp Gemini 2.5 Flash | Bài 1 (Dễ) | ĐÃ ĐẠT | [`01-stdio/chat_client.py`](01-stdio/chat_client.py) |
-| Hướng dẫn đăng ký Claude Code | Bài 1 (Dễ) | ĐÃ ĐẠT | Mục 3 trong README |
+| Hướng dẫn đăng ký Claude Code + `.mcp.json` | Bài 1 (Dễ) | ĐÃ ĐẠT | [`.mcp.json`](../.mcp.json) & Mục 3 |
 | Server Streamable HTTP (`0.0.0.0:8000/mcp`) | Bài 2 (Trung bình) | ĐÃ ĐẠT | [`02-auth/auth_log_server.py`](02-auth/auth_log_server.py) |
 | Bearer Token Authentication (3/3 test cases) | Bài 2 (Trung bình) | ĐÃ ĐẠT | [`02-auth/auth_test_results.json`](02-auth/auth_test_results.json) |
 | Resource `server://info` chứa metadata | Bài 3 (Khó) | ĐÃ ĐẠT | [`03-versioning/versioned_log_server.py`](03-versioning/versioned_log_server.py) |
