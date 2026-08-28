@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "log-analyzer": {
+      "command": ".venv/Scripts/python.exe",
+      "args": ["./lab-solution/01-stdio/log_server.py"],
+      "env": {}
+    }
+  }
+}
